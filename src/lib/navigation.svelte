@@ -7,7 +7,6 @@
   function drawerClose(): void {
     drawerStore.close();
   }
-  console.log($page.url.pathname);
 </script>
 
 <nav class="list-nav p-4">
@@ -62,6 +61,6 @@
 
 <style>
   .active {
-    background-color: rgb(var(--color-primary-500) / 0.1) !important;
+    background-color: rgb(var(--color-primary-500) / 0.1);
   }
 </style>
