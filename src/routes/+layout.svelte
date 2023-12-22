@@ -13,6 +13,7 @@
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
+  import { tagFilter } from '$lib/stores/filters';
 
   import '../app.pcss';
 
@@ -57,6 +58,14 @@
           <strong class="text-xl uppercase">Pottery Tracker</strong>
         </div>
       </svelte:fragment>
+      <div class="flex w-full justify-end gap-2">
+        {#if $tagFilter}
+          <span>Filter:</span>
+          <button class="variant-filled chip" on:click={() => tagFilter.set(undefined)}>
+            {$tagFilter} x
+          </button>
+        {/if}
+      </div>
     </AppBar>
   </svelte:fragment>
   <svelte:fragment slot="sidebarLeft"><Navigation /></svelte:fragment>

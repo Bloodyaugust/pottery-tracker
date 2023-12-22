@@ -1,5 +1,6 @@
 <script lang="ts">
   import { dexie } from '$lib/stores/dexie';
+  import { tagFilter } from '$lib/stores/filters';
   import { photoViewerPhoto } from '$lib/stores/photoViewer';
   import type { Photo } from '$lib/types/photo';
   import { getModalStore } from '@skeletonlabs/skeleton';
@@ -21,6 +22,9 @@
               : [],
         }))
       : [];
+  $: filteredPieces = $tagFilter
+    ? hydratedPieces.filter((piece) => piece.tags.includes($tagFilter as string))
+    : hydratedPieces;
   const modalStore = getModalStore();
 
   function onAddPiece() {
@@ -37,10 +41,14 @@
       component: 'photoViewer',
     });
   }
+
+  function handleTagClick(tag: string) {
+    tagFilter.update(() => tag);
+  }
 </script>
 
 <div class="flex flex-col gap-4">
-  {#each hydratedPieces as piece (piece.id)}
+  {#each filteredPieces as piece (piece.id)}
     <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
       <div class="flex flex-1 flex-col gap-2 overflow-hidden">
         <span class="h3">{piece.name}</span>
@@ -49,7 +57,9 @@
             <span>No Tags</span>
           {:else}
             {#each piece.tags.split(',').slice(0, 3) as tag}
-              <span class="variant-filled chip">{tag}</span>
+              <button class="variant-filled chip" on:click={() => handleTagClick(tag)}>
+                {tag}
+              </button>
             {/each}
           {/if}
         </div>
