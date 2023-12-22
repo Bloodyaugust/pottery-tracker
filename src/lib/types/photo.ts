@@ -1,5 +1,6 @@
 export type Photo = {
   id: string;
-  path: string;
+  base64: string;
   stage: string;
+  createdAt: string;
 };

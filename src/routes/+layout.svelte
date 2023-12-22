@@ -11,6 +11,7 @@
   } from '@skeletonlabs/skeleton';
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
+  import PhotoViewer from '$lib/modals/photoViewer.svelte';
 
   import '../app.pcss';
 
@@ -18,6 +19,7 @@
 
   const modalRegistry: Record<string, ModalComponent> = {
     newPieceModal: { ref: newPieceModal },
+    photoViewer: { ref: PhotoViewer },
   };
 
   const drawerStore = getDrawerStore();
