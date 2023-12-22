@@ -5,7 +5,7 @@
   import { getModalStore } from '@skeletonlabs/skeleton';
   import { liveQuery } from 'dexie';
 
-  let dbPieces = liveQuery(() => dexie.pieces.toCollection().sortBy('createdAt'));
+  let dbPieces = liveQuery(() => dexie.pieces.toCollection().reverse().sortBy('createdAt'));
   let dbPhotos = liveQuery(() => dexie.photos.toCollection().sortBy('createdAt'));
 
   $: hydratedPieces =

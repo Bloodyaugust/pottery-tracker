@@ -8,6 +8,7 @@
     autoModeWatcher,
     Modal,
     type ModalComponent,
+    Toast,
   } from '@skeletonlabs/skeleton';
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
@@ -38,6 +39,7 @@
   <Navigation />
 </Drawer>
 <Modal components={modalRegistry} />
+<Toast />
 <AppShell slotSidebarLeft="bg-surface-500/5 w-0 lg:w-64">
   <svelte:fragment slot="header">
     <AppBar>

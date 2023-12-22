@@ -1,24 +1,31 @@
 <script lang="ts">
   import { dexie } from '$lib/stores/dexie';
   import { convertToBase64 } from '$lib/util/image';
+  import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
 
-  let name: string;
-  let tags: string;
-  let description: string;
+  const modalStore = getModalStore();
+  const toastStore = getToastStore();
+
+  let name: string = '';
+  let tags: string = '';
+  let description: string = '';
   let files: FileList;
   async function handleSubmit() {
     const photoIDs: string[] = [];
-    for (const file of files) {
-      const fileBase64 = await convertToBase64(file);
 
-      const newPhotoID = (await dexie.photos.add({
-        id: crypto.randomUUID(),
-        base64: fileBase64 as string,
-        stage: 'test',
-        createdAt: new Date().toISOString(),
-      })) as string;
+    if (files) {
+      for (const file of files) {
+        const fileBase64 = await convertToBase64(file);
 
-      photoIDs.push(newPhotoID);
+        const newPhotoID = (await dexie.photos.add({
+          id: crypto.randomUUID(),
+          base64: fileBase64 as string,
+          stage: 'test',
+          createdAt: new Date().toISOString(),
+        })) as string;
+
+        photoIDs.push(newPhotoID);
+      }
     }
 
     await dexie.pieces.add({
@@ -29,6 +36,12 @@
       tags,
       description,
     });
+
+    toastStore.trigger({
+      message: 'Piece added!',
+      timeout: 2000,
+    });
+    modalStore.close();
   }
 </script>
 
@@ -36,7 +49,7 @@
   <form class="form flex flex-col gap-4" on:submit|preventDefault={handleSubmit}>
     <label class="label">
       <span>Name</span>
-      <input class="input p-2" type="text" placeholder="Pot" bind:value={name} />
+      <input class="input p-2" type="text" placeholder="Pot" bind:value={name} required />
     </label>
     <label class="label">
       <span>Tags</span>
