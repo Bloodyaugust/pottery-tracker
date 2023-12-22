@@ -1,8 +1,17 @@
 <script lang="ts">
   import { db } from '$lib/stores/dexie';
+  import { getModalStore } from '@skeletonlabs/skeleton';
   import { liveQuery } from 'dexie';
 
   let dbPieces = liveQuery(() => db.pieces.toArray());
+  const modalStore = getModalStore();
+
+  function onAddPiece() {
+    modalStore.trigger({
+      type: 'component',
+      component: 'newPieceModal',
+    });
+  }
 </script>
 
 <div class="flex flex-col gap-4">
@@ -21,4 +30,10 @@
   {/if}
 </div>
 
-<button type="button" class="variant-filled-primary btn btn-lg fixed bottom-4 right-4">Add</button>
+<button
+  type="button"
+  class="variant-filled-primary btn btn-lg fixed bottom-4 right-4"
+  on:click={onAddPiece}
+>
+  Add
+</button>
