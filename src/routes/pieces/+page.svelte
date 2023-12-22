@@ -51,7 +51,7 @@
   {#each filteredPieces as piece (piece.id)}
     <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
       <div class="flex flex-1 flex-col gap-2 overflow-hidden">
-        <span class="h3">{piece.name}</span>
+        <a class="anchor h3" href={`/pieces/${piece.id}`}>{piece.name}</a>
         <div class="flex gap-2">
           {#if piece.tags === ''}
             <span>No Tags</span>

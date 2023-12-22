@@ -5,10 +5,10 @@ export type Piece = {
   tags: string;
   photoIDs: string;
   description: string;
-  // size: string;
-  // weight: string;
-  // clayType: string;
-  // glaze: string;
-  // stages: StageHistory[];
-  // firings: Firing[];
+  size: string;
+  weight: string;
+  clayType: string;
+  glaze: string;
+  stageIDs: string;
+  firingIDs: string;
 };

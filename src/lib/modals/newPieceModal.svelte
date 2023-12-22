@@ -35,6 +35,12 @@
       createdAt: new Date().toISOString(),
       tags,
       description,
+      size: '',
+      weight: '',
+      clayType: '',
+      glaze: '',
+      stageIDs: '',
+      firingIDs: '',
     });
 
     toastStore.trigger({
