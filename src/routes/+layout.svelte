@@ -14,6 +14,7 @@
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
   import { tagFilter } from '$lib/stores/filters';
+  import PersistenceChecker from '$lib/util/persistenceChecker.svelte';
 
   import '../app.pcss';
 
@@ -36,6 +37,7 @@
   {@html `<link rel="manifest" href="manifest.json" />`}
 </svelte:head>
 
+<PersistenceChecker />
 <Drawer>
   <Navigation />
 </Drawer>
