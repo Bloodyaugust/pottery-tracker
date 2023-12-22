@@ -43,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"dexie": "^4.0.1-beta.6",
 		"ts-node": "^10.9.2"
 	}
 }

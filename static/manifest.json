@@ -1,0 +1,26 @@
+{
+  "name": "Pottery Tracker",
+  "icons": [
+    {
+      "src": "pottery-tracker.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "start_url": "/",
+  "display": "minimal-ui",
+  "screenshots": [
+    {
+      "src": "pottery-tracker-screenshot.png",
+      "form_factor": "wide",
+      "sizes": "726x558",
+      "type": "image/png"
+    },
+    {
+      "src": "pottery-tracker-screenshot-2.png",
+      "form_factor": "narrow",
+      "sizes": "320x518",
+      "type": "image/png"
+    }
+  ]
+}
