@@ -1,5 +1,6 @@
 {
   "name": "Pottery Tracker",
+  "description": "Helps you track your pots.",
   "icons": [
     {
       "src": "pottery-tracker.png",
@@ -7,7 +8,7 @@
       "sizes": "1024x1024"
     }
   ],
-  "start_url": "/",
+  "start_url": "https://bloodyaugust.github.io/pottery-tracker/",
   "display": "minimal-ui",
   "screenshots": [
     {

@@ -72,7 +72,14 @@
     </label>
     <label class="label">
       <span>Photos</span>
-      <input class="input p-2" type="file" accept="image/*" multiple bind:files />
+      <input
+        class="input p-2"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        multiple
+        bind:files
+      />
     </label>
     <input class="input mt-4 p-2" type="submit" value="Add Piece" />
   </form>
