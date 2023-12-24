@@ -8,8 +8,10 @@
     Modal,
     type ModalComponent,
     Toast,
+    storePopup,
   } from '@skeletonlabs/skeleton';
   import { onMount } from 'svelte';
+  import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
@@ -19,6 +21,8 @@
   import '../app.pcss';
 
   initializeStores();
+
+  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
   const modalRegistry: Record<string, ModalComponent> = {
     newPieceModal: { ref: newPieceModal },
