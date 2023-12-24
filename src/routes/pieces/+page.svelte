@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from '$app/paths';
   import { dexie } from '$lib/stores/dexie';
   import { tagFilter } from '$lib/stores/filters';
   import { photoViewerPhoto } from '$lib/stores/photoViewer';
@@ -51,7 +52,7 @@
   {#each filteredPieces as piece (piece.id)}
     <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
       <div class="flex flex-1 flex-col gap-2 overflow-hidden">
-        <a class="anchor h3" href={`/pieces/${piece.id}`}>{piece.name}</a>
+        <a class="anchor h3" href="{base}/pieces/{piece.id}">{piece.name}</a>
         <div class="flex gap-2">
           {#if piece.tags === ''}
             <span>No Tags</span>

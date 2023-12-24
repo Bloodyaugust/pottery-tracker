@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getDrawerStore } from '@skeletonlabs/skeleton';
   import { page } from '$app/stores';
+  import { base } from '$app/paths';
 
   const drawerStore = getDrawerStore();
 
@@ -12,7 +13,12 @@
 <nav class="list-nav p-4">
   <ul>
     <li>
-      <a class="anchor" class:active={$page.url.pathname === '/'} href="/" on:click={drawerClose}>
+      <a
+        class="anchor"
+        class:active={$page.url.pathname === '/'}
+        href="{base}/"
+        on:click={drawerClose}
+      >
         Dashboard
       </a>
     </li>
@@ -20,7 +26,7 @@
       <a
         class="anchor"
         class:active={$page.url.pathname === '/pieces'}
-        href="/pieces"
+        href="{base}/pieces"
         on:click={drawerClose}
       >
         Pieces
@@ -30,7 +36,7 @@
       <a
         class="anchor"
         class:active={$page.url.pathname === '/todo'}
-        href="/todo"
+        href="{base}/todo"
         on:click={drawerClose}
       >
         Todo
@@ -40,7 +46,7 @@
       <a
         class="anchor"
         class:active={$page.url.pathname === '/test-tiles'}
-        href="/test-tiles"
+        href="{base}/test-tiles"
         on:click={drawerClose}
       >
         Test Tiles
@@ -50,7 +56,7 @@
       <a
         class="anchor"
         class:active={$page.url.pathname === '/stages'}
-        href="/stages"
+        href="{base}/stages"
         on:click={drawerClose}
       >
         Stages
