@@ -5,11 +5,11 @@
     initializeStores,
     Drawer,
     getDrawerStore,
-    autoModeWatcher,
     Modal,
     type ModalComponent,
     Toast,
   } from '@skeletonlabs/skeleton';
+  import { onMount } from 'svelte';
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
@@ -30,10 +30,15 @@
   function drawerOpen(): void {
     drawerStore.open({});
   }
+
+  onMount(() => {
+    if (window.matchMedia('(prefers-color-scheme: light)').matches === false) {
+      document.documentElement.classList.add('dark');
+    }
+  });
 </script>
 
 <svelte:head>
-  {@html `<script>${autoModeWatcher.toString()} autoModeWatcher();</script>`}
   {@html `<link rel="manifest" href="manifest.json" />`}
 </svelte:head>
 
