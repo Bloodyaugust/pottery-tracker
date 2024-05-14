@@ -32,36 +32,6 @@
         Pieces
       </a>
     </li>
-    <li>
-      <a
-        class="anchor"
-        class:active={$page.url.pathname === '/todo'}
-        href="{base}/todo"
-        on:click={drawerClose}
-      >
-        Todo
-      </a>
-    </li>
-    <li>
-      <a
-        class="anchor"
-        class:active={$page.url.pathname === '/test-tiles'}
-        href="{base}/test-tiles"
-        on:click={drawerClose}
-      >
-        Test Tiles
-      </a>
-    </li>
-    <li>
-      <a
-        class="anchor"
-        class:active={$page.url.pathname === '/stages'}
-        href="{base}/stages"
-        on:click={drawerClose}
-      >
-        Stages
-      </a>
-    </li>
   </ul>
 </nav>
 
