@@ -53,29 +53,33 @@
 </script>
 
 <div class="flex flex-col gap-4">
-  {#each filteredPieces as piece (piece.id)}
-    <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
-      <div class="flex flex-1 flex-col gap-2 overflow-hidden">
-        <a class="anchor h3" href="{base}/pieces/{piece.id}">{piece.number}</a>
-        <div class="flex gap-2">
-          {#if piece.type === ''}
-            <span>No Type</span>
-          {:else}
-            <button class="variant-filled chip" on:click={() => handleTagClick(piece.type)}>
-              {types.find((pieceType) => pieceType.id === piece.type)?.name}
+  {#if filteredPieces.length}
+    {#each filteredPieces as piece (piece.id)}
+      <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
+        <div class="flex flex-1 flex-col gap-2 overflow-hidden">
+          <a class="anchor h3" href="{base}/pieces/{piece.id}">{piece.number}</a>
+          <div class="flex gap-2">
+            {#if piece.type === ''}
+              <span>No Type</span>
+            {:else}
+              <button class="variant-filled chip" on:click={() => handleTagClick(piece.type)}>
+                {types.find((pieceType) => pieceType.id === piece.type)?.name}
+              </button>
+            {/if}
+          </div>
+        </div>
+        <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
+          {#each piece.photos as photo (photo.id)}
+            <button on:click={() => handlePhotoClick(photo)}>
+              <img src={photo.base64} alt={`${piece.number}`} />
             </button>
-          {/if}
+          {/each}
         </div>
       </div>
-      <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
-        {#each piece.photos as photo (photo.id)}
-          <button on:click={() => handlePhotoClick(photo)}>
-            <img src={photo.base64} alt={`${piece.number}`} />
-          </button>
-        {/each}
-      </div>
-    </div>
-  {/each}
+    {/each}
+  {:else}
+    <span>No pieces</span>
+  {/if}
 </div>
 
 <button
