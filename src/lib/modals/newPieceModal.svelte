@@ -99,6 +99,7 @@
         bind:value={type}
         placeholder="Select a type..."
         use:popup={stagePopupSettings}
+        autocomplete="off"
       />
       <div
         class="card max-h-48 w-full max-w-sm overflow-y-auto border p-4"

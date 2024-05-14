@@ -32,6 +32,16 @@
         Pieces
       </a>
     </li>
+    <li>
+      <a
+        class="anchor"
+        class:active={$page.url.pathname === '/types'}
+        href="{base}/types"
+        on:click={drawerClose}
+      >
+        Types
+      </a>
+    </li>
   </ul>
 </nav>
 
