@@ -1,4 +1,4 @@
-export type Stage = {
+export type PieceType = {
   id: string;
   name: string;
   createdAt: string;

@@ -15,10 +15,18 @@
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
-  import { tagFilter } from '$lib/stores/filters';
+  import { typeFilter } from '$lib/stores/filters';
   import PersistenceChecker from '$lib/util/persistenceChecker.svelte';
 
   import '../app.pcss';
+  import { dexie } from '$lib/stores/dexie';
+  import { liveQuery } from 'dexie';
+
+  let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
+  let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
+
+  $: types = $dbTypes ? $dbTypes : [];
+  $: saleStages = $dbSaleStages ? $dbSaleStages : [];
 
   initializeStores();
 
@@ -70,10 +78,10 @@
         </div>
       </svelte:fragment>
       <div class="flex w-full justify-end gap-2">
-        {#if $tagFilter}
+        {#if $typeFilter}
           <span>Filter:</span>
-          <button class="variant-filled chip" on:click={() => tagFilter.set(undefined)}>
-            {$tagFilter} x
+          <button class="variant-filled chip" on:click={() => typeFilter.set(undefined)}>
+            {types.find((pieceType) => pieceType.id === $typeFilter)?.name} x
           </button>
         {/if}
       </div>

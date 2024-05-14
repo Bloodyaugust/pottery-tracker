@@ -1,7 +1,7 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { dexie } from '$lib/stores/dexie';
-  import { tagFilter } from '$lib/stores/filters';
+  import { typeFilter } from '$lib/stores/filters';
   import { photoViewerPhoto } from '$lib/stores/photoViewer';
   import type { Photo } from '$lib/types/photo';
   import { getModalStore } from '@skeletonlabs/skeleton';
@@ -9,7 +9,11 @@
 
   let dbPieces = liveQuery(() => dexie.pieces.toCollection().reverse().sortBy('createdAt'));
   let dbPhotos = liveQuery(() => dexie.photos.toCollection().sortBy('createdAt'));
+  let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
+  let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
 
+  $: types = $dbTypes ? $dbTypes : [];
+  $: saleStages = $dbSaleStages ? $dbSaleStages : [];
   $: hydratedPieces =
     $dbPieces && $dbPhotos
       ? $dbPieces.map((piece) => ({
@@ -23,8 +27,8 @@
               : [],
         }))
       : [];
-  $: filteredPieces = $tagFilter
-    ? hydratedPieces.filter((piece) => piece.tags.includes($tagFilter as string))
+  $: filteredPieces = $typeFilter
+    ? hydratedPieces.filter((piece) => piece.type.includes($typeFilter as string))
     : hydratedPieces;
   const modalStore = getModalStore();
 
@@ -43,8 +47,8 @@
     });
   }
 
-  function handleTagClick(tag: string) {
-    tagFilter.update(() => tag);
+  function handleTagClick(type: string) {
+    typeFilter.update(() => type);
   }
 </script>
 
@@ -52,23 +56,21 @@
   {#each filteredPieces as piece (piece.id)}
     <div class="item flex gap-2 !rounded-sm bg-surface-500 !p-4">
       <div class="flex flex-1 flex-col gap-2 overflow-hidden">
-        <a class="anchor h3" href="{base}/pieces/{piece.id}">{piece.name}</a>
+        <a class="anchor h3" href="{base}/pieces/{piece.id}">{piece.number}</a>
         <div class="flex gap-2">
-          {#if piece.tags === ''}
-            <span>No Tags</span>
+          {#if piece.type === ''}
+            <span>No Type</span>
           {:else}
-            {#each piece.tags.split(',').slice(0, 3) as tag}
-              <button class="variant-filled chip" on:click={() => handleTagClick(tag)}>
-                {tag}
-              </button>
-            {/each}
+            <button class="variant-filled chip" on:click={() => handleTagClick(piece.type)}>
+              {types.find((pieceType) => pieceType.id === piece.type)?.name}
+            </button>
           {/if}
         </div>
       </div>
       <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
         {#each piece.photos as photo (photo.id)}
           <button on:click={() => handlePhotoClick(photo)}>
-            <img src={photo.base64} alt={piece.name} />
+            <img src={photo.base64} alt={`${piece.number}`} />
           </button>
         {/each}
       </div>

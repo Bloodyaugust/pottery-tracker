@@ -20,18 +20,22 @@
   const modalStore = getModalStore();
   const toastStore = getToastStore();
 
-  let dbStages = liveQuery(() => dexie.stages.toCollection().sortBy('sortOrder'));
+  let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
+  let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
+  let dbNumPieces = liveQuery(() => dexie.pieces.toCollection().count());
 
-  $: stageOptions = $dbStages
-    ? $dbStages.map((dbStage) => ({ label: dbStage.name, value: dbStage.id }))
+  $: typeOptions = $dbTypes
+    ? $dbTypes.map((dbType) => ({ label: dbType.name, value: dbType.id }))
     : [];
+  $: saleStageOptions = $dbSaleStages
+    ? $dbSaleStages.map((dbSaleStage) => ({ label: dbSaleStage.name, value: dbSaleStage.id }))
+    : [];
+  $: nextPieceNum = $dbNumPieces ? $dbNumPieces + 100 : 100;
 
-  let name: string = '';
-  let tags: string = '';
-  let description: string = '';
-  let stage: string = '';
-  let stageID: string = '';
   let files: FileList;
+  let price: number = 0;
+  let type: string = '';
+  let typeID: string = '';
 
   async function handleSubmit() {
     const photoIDs: string[] = [];
@@ -51,34 +55,14 @@
       }
     }
 
-    let creatingStage;
-    if (stageID === '') {
-      creatingStage = await dexie.stageHistories.add({
-        id: await crypto.randomUUID(),
-        stage: $dbStages[0].id,
-        startedAt: new Date().toISOString(),
-      });
-    } else {
-      creatingStage = await dexie.stageHistories.add({
-        id: await crypto.randomUUID(),
-        stage: stageID,
-        startedAt: new Date().toISOString(),
-      });
-    }
-
     await dexie.pieces.add({
       id: crypto.randomUUID(),
-      name,
       photoIDs: photoIDs.join(','),
       createdAt: new Date().toISOString(),
-      tags,
-      description,
-      size: '',
-      weight: '',
-      clayType: '',
-      glaze: '',
-      stageIDs: creatingStage,
-      firingIDs: '',
+      type: typeID,
+      number: nextPieceNum,
+      price,
+      saleStage: saleStageOptions[0].value,
     });
 
     toastStore.trigger({
@@ -88,30 +72,30 @@
     modalStore.close();
   }
 
-  function handleStageSelect(event: CustomEvent<AutocompleteOption<string>>): void {
-    stage = event.detail.label;
-    stageID = event.detail.value;
+  function handleTypeSelect(event: CustomEvent<AutocompleteOption<string>>): void {
+    type = event.detail.label;
+    typeID = event.detail.value;
   }
 </script>
 
 <div class="card p-4">
   <form class="form flex flex-col gap-4" on:submit|preventDefault={handleSubmit}>
     <label class="label">
-      <span>Name</span>
-      <input class="input p-2" type="text" placeholder="Pot" bind:value={name} required />
+      <span>Number</span>
+      <input class="input p-2" type="text" bind:value={nextPieceNum} required disabled />
     </label>
     <label class="label">
-      <span>Tags</span>
-      <input class="input p-2" type="text" placeholder="new,amazing" bind:value={tags} />
+      <span>Price</span>
+      <input class="input p-2" type="text" bind:value={price} required />
     </label>
     <label class="label">
-      <span>Stage</span>
+      <span>Type</span>
       <input
         class="autocomplete input p-2"
         type="search"
         name="autocomplete-search"
-        bind:value={stage}
-        placeholder="Select a stage..."
+        bind:value={type}
+        placeholder="Select a type..."
         use:popup={stagePopupSettings}
       />
       <div
@@ -120,21 +104,12 @@
         data-popup="popupAutocomplete"
       >
         <Autocomplete
-          bind:input={stage}
-          options={stageOptions}
-          on:selection={handleStageSelect}
+          bind:input={type}
+          options={typeOptions}
+          on:selection={handleTypeSelect}
           regionItem="border-b-2"
         />
       </div>
-    </label>
-    <label class="label">
-      <span>Description</span>
-      <textarea
-        class="textarea p-2"
-        rows="4"
-        placeholder="Description for the piece. Notes can go here, too!"
-        bind:value={description}
-      />
     </label>
     <label class="label">
       <span>Photos</span>
