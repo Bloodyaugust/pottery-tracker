@@ -11,7 +11,7 @@ export class MySubClassedDexie extends Dexie {
   saleStages!: Table<SaleStage>;
 
   constructor() {
-    super('myDatabase');
+    super('potteryTracker');
     this.version(1).stores({
       pieces: 'id, number',
       photos: 'id',

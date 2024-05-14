@@ -17,7 +17,7 @@
 
   const singleSelectPopupSettings: PopupSettings = {
     event: 'focus-click',
-    target: 'popupAutocomplete',
+    target: '',
     placement: 'bottom',
   };
 
@@ -29,6 +29,7 @@
   let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
 
   let typeSearch: string = '';
+  let saleStageSearch: string = '';
 
   $: hydratedPiece = $piece
     ? $piece
@@ -43,13 +44,39 @@
   $: types = $dbTypes ? $dbTypes : [];
   $: saleStages = $dbSaleStages ? $dbSaleStages : [];
   $: typeOptions = types.map((pieceType) => ({ label: pieceType.name, value: pieceType.id }));
+  $: saleStageOptions = saleStages.map((saleStage) => ({
+    label: saleStage.name,
+    value: saleStage.id,
+  }));
   $: selectedType = typeOptions
     ? types.find((pieceType) => pieceType.id === hydratedPiece.type)
+    : undefined;
+  $: selectedSaleStage = saleStageOptions
+    ? saleStages.find((saleStage) => saleStage.id === hydratedPiece.saleStage)
     : undefined;
 
   $: photos = liveQuery(() => dexie.photos.bulkGet(hydratedPiece.photoIDs.split(',')));
   $: hydratedPhotos = $photos ? ($photos.filter((photo) => photo !== undefined) as Photo[]) : [];
+  $: selectedType, setTypeSearch(selectedType?.name || '');
+  $: selectedSaleStage, setSaleStageSearch(selectedSaleStage?.name || '');
 
+  function setTypeSearch(value: string) {
+    typeSearch = value;
+  }
+
+  function setSaleStageSearch(value: string) {
+    saleStageSearch = value;
+  }
+
+  async function handleSaleStageSelect(event: CustomEvent<AutocompleteOption<string>>) {
+    await dexie.pieces.update(hydratedPiece.id, {
+      saleStage: event.detail.value,
+    });
+
+    toastStore.trigger({
+      message: 'Piece Saved!',
+    });
+  }
   async function handleTypeSelect(event: CustomEvent<AutocompleteOption<string>>) {
     await dexie.pieces.update(hydratedPiece.id, {
       type: event.detail.value,
@@ -72,31 +99,54 @@
   <div class="flex gap-4">
     <h2 class="h2">{hydratedPiece.number}</h2>
     <div class="flex gap-2">
-      <span>{types.find((pieceType) => pieceType.id === hydratedPiece.type)?.name}</span>
       <label class="label">
         <span>Type</span>
         <input
+          autocomplete="off"
           class="autocomplete input p-2"
           type="search"
-          name="autocomplete-search"
+          name="type-search"
           bind:value={typeSearch}
           placeholder="Select a type..."
-          use:popup={singleSelectPopupSettings}
+          use:popup={{ ...singleSelectPopupSettings, target: 'type' }}
         />
         <div
           class="card max-h-48 w-full max-w-sm overflow-y-auto border p-4"
           tabindex="-1"
-          data-popup="popupAutocomplete"
+          data-popup="type"
         >
           <Autocomplete
-            bind:input={hydratedPiece.type}
+            bind:input={typeSearch}
             options={typeOptions}
             on:selection={handleTypeSelect}
             regionItem="border-b-2"
           />
         </div>
       </label>
-      <span>{saleStages.find((saleStage) => saleStage.id === hydratedPiece.saleStage)?.name}</span>
+      <label class="label">
+        <span>Sale Stage</span>
+        <input
+          autocomplete="off"
+          class="autocomplete input p-2"
+          type="search"
+          name="sale-stage-search"
+          bind:value={saleStageSearch}
+          placeholder="Select a type..."
+          use:popup={{ ...singleSelectPopupSettings, target: 'saleStage' }}
+        />
+        <div
+          class="card max-h-48 w-full max-w-sm overflow-y-auto border p-4"
+          tabindex="-1"
+          data-popup="saleStage"
+        >
+          <Autocomplete
+            bind:input={saleStageSearch}
+            options={saleStageOptions}
+            on:selection={handleSaleStageSelect}
+            regionItem="border-b-2"
+          />
+        </div>
+      </label>
     </div>
   </div>
 
