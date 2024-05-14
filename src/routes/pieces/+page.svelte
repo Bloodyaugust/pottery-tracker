@@ -1,16 +1,21 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { dexie } from '$lib/stores/dexie';
-  import { typeFilter } from '$lib/stores/filters';
+  import { saleStageFilter, typeFilter } from '$lib/stores/filters';
   import { photoViewerPhoto } from '$lib/stores/photoViewer';
   import type { Photo } from '$lib/types/photo';
+  import type { HydratedPiece } from '$lib/types/piece';
   import { getModalStore } from '@skeletonlabs/skeleton';
   import { liveQuery } from 'dexie';
+
+  const modalStore = getModalStore();
 
   let dbPieces = liveQuery(() => dexie.pieces.toCollection().reverse().sortBy('createdAt'));
   let dbPhotos = liveQuery(() => dexie.photos.toCollection().sortBy('createdAt'));
   let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
   let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
+  let hydratedPieces: HydratedPiece[] = [];
+  let filteredPieces: HydratedPiece[] = [];
 
   $: types = $dbTypes ? $dbTypes : [];
   $: saleStages = $dbSaleStages ? $dbSaleStages : [];
@@ -27,10 +32,20 @@
               : [],
         }))
       : [];
-  $: filteredPieces = $typeFilter
-    ? hydratedPieces.filter((piece) => piece.type.includes($typeFilter as string))
-    : hydratedPieces;
-  const modalStore = getModalStore();
+
+  $: {
+    let filteringPieces = hydratedPieces;
+
+    if ($typeFilter) {
+      filteringPieces = filteringPieces.filter((piece) => piece.type === $typeFilter);
+    }
+
+    if ($saleStageFilter) {
+      filteringPieces = filteringPieces.filter((piece) => piece.saleStage == $saleStageFilter);
+    }
+
+    filteredPieces = filteringPieces;
+  }
 
   function onAddPiece() {
     modalStore.trigger({
@@ -47,8 +62,12 @@
     });
   }
 
-  function handleTagClick(type: string) {
+  function handleTypeClick(type: string) {
     typeFilter.update(() => type);
+  }
+
+  function handleSaleStageClick(type: string) {
+    saleStageFilter.update(() => type);
   }
 </script>
 
@@ -62,8 +81,14 @@
             {#if piece.type === ''}
               <span>No Type</span>
             {:else}
-              <button class="variant-filled chip" on:click={() => handleTagClick(piece.type)}>
+              <button class="variant-filled chip" on:click={() => handleTypeClick(piece.type)}>
                 {types.find((pieceType) => pieceType.id === piece.type)?.name}
+              </button>
+              <button
+                class="variant-filled chip"
+                on:click={() => handleSaleStageClick(piece.saleStage)}
+              >
+                {saleStages.find((saleStage) => saleStage.id === piece.saleStage)?.name}
               </button>
             {/if}
           </div>

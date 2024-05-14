@@ -63,6 +63,8 @@
       number: nextPieceNum,
       price,
       saleStage: saleStageOptions[0].value,
+      soldAmount: 0,
+      soldDate: '',
     });
 
     toastStore.trigger({

@@ -1,3 +1,5 @@
+import type { Photo } from './photo';
+
 export type Piece = {
   id: string;
   createdAt: string;
@@ -6,4 +8,10 @@ export type Piece = {
   type: string;
   price: number;
   saleStage: string;
+  soldDate: string;
+  soldAmount: number;
+};
+
+export type HydratedPiece = Piece & {
+  photos: Photo[];
 };

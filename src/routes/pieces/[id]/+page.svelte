@@ -28,6 +28,9 @@
   let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
   let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
 
+  let price: number = 0;
+  let soldAmount: number = 0;
+  let soldDate: string = '';
   let typeSearch: string = '';
   let saleStageSearch: string = '';
 
@@ -40,6 +43,9 @@
         type: '',
         number: 100,
         saleStage: '',
+        price: 0,
+        soldDate: '',
+        soldAmount: 0,
       };
   $: types = $dbTypes ? $dbTypes : [];
   $: saleStages = $dbSaleStages ? $dbSaleStages : [];
@@ -59,6 +65,21 @@
   $: hydratedPhotos = $photos ? ($photos.filter((photo) => photo !== undefined) as Photo[]) : [];
   $: selectedType, setTypeSearch(selectedType?.name || '');
   $: selectedSaleStage, setSaleStageSearch(selectedSaleStage?.name || '');
+  $: hydratedPiece, setPrice(hydratedPiece.price);
+  $: hydratedPiece, setSoldAmount(hydratedPiece.soldAmount);
+  $: hydratedPiece, setSoldDate(hydratedPiece.soldDate);
+
+  function setPrice(value: number) {
+    price = value;
+  }
+
+  function setSoldAmount(value: number) {
+    soldAmount = value;
+  }
+
+  function setSoldDate(value: string) {
+    soldDate = value;
+  }
 
   function setTypeSearch(value: string) {
     typeSearch = value;
@@ -93,11 +114,38 @@
       component: 'photoViewer',
     });
   }
+  async function handlePriceBlur() {
+    await dexie.pieces.update(hydratedPiece.id, {
+      price,
+    });
+
+    toastStore.trigger({
+      message: 'Piece Saved!',
+    });
+  }
+  async function handleSoldAmountBlur() {
+    await dexie.pieces.update(hydratedPiece.id, {
+      soldAmount,
+    });
+
+    toastStore.trigger({
+      message: 'Piece Saved!',
+    });
+  }
+  async function handleSoldDateBlur() {
+    await dexie.pieces.update(hydratedPiece.id, {
+      soldDate,
+    });
+
+    toastStore.trigger({
+      message: 'Piece Saved!',
+    });
+  }
 </script>
 
 <div class="flex flex-col gap-4">
+  <h2 class="h2">{hydratedPiece.number}</h2>
   <div class="flex gap-4">
-    <h2 class="h2">{hydratedPiece.number}</h2>
     <div class="flex gap-2">
       <label class="label">
         <span>Type</span>
@@ -149,6 +197,43 @@
       </label>
     </div>
   </div>
+  <div class="flex gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="price">Price</label>
+      <input
+        type="number"
+        class="input p-2"
+        id="price"
+        bind:value={price}
+        on:blur={handlePriceBlur}
+      />
+    </div>
+  </div>
+
+  {#if selectedSaleStage?.name === 'Sold'}
+    <div class="flex gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="sold-amount">Sale Amount</label>
+        <input
+          type="number"
+          class="input p-2"
+          id="sold-amount"
+          bind:value={soldAmount}
+          on:blur={handleSoldAmountBlur}
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="sold-date">Sale Date</label>
+        <input
+          type="date"
+          class="input p-2"
+          id="sold-date"
+          bind:value={soldDate}
+          on:blur={handleSoldDateBlur}
+        />
+      </div>
+    </div>
+  {/if}
 
   <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
     {#each hydratedPhotos as photo (photo.id)}

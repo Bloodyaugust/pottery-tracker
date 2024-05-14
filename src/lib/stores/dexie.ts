@@ -19,6 +19,35 @@ export class MySubClassedDexie extends Dexie {
       saleStages: 'id',
     });
 
+    this.version(2)
+      .stores({
+        pieces: 'id, number',
+        photos: 'id',
+        types: 'id',
+        saleStages: 'id',
+      })
+      .upgrade(async (tx) => {
+        const saleStages = await tx.table<SaleStage>('saleStages').toCollection().toArray();
+        const soldStage = saleStages.find((saleStage) => saleStage.name === 'Sold');
+
+        if (!soldStage) {
+          throw Error('Could not find Sold stage when upgrading.');
+        }
+
+        return tx
+          .table<Piece>('pieces')
+          .toCollection()
+          .modify((piece) => {
+            if (piece.saleStage === soldStage.id) {
+              piece.soldDate = piece.createdAt;
+              piece.soldAmount = piece.price;
+            } else {
+              piece.soldAmount = 0;
+              piece.soldDate = '';
+            }
+          });
+      });
+
     this.on('populate', async () => {
       this.types.add({
         id: await crypto.randomUUID(),

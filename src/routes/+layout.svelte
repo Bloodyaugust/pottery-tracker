@@ -15,7 +15,7 @@
   import Navigation from '$lib/navigation.svelte';
   import newPieceModal from '$lib/modals/newPieceModal.svelte';
   import PhotoViewer from '$lib/modals/photoViewer.svelte';
-  import { typeFilter } from '$lib/stores/filters';
+  import { saleStageFilter, typeFilter } from '$lib/stores/filters';
   import PersistenceChecker from '$lib/util/persistenceChecker.svelte';
 
   import '../app.pcss';
@@ -78,10 +78,17 @@
         </div>
       </svelte:fragment>
       <div class="flex w-full justify-end gap-2">
-        {#if $typeFilter}
+        {#if $typeFilter || $saleStageFilter}
           <span>Filter:</span>
+        {/if}
+        {#if $typeFilter}
           <button class="variant-filled chip" on:click={() => typeFilter.set(undefined)}>
             {types.find((pieceType) => pieceType.id === $typeFilter)?.name} x
+          </button>
+        {/if}
+        {#if $saleStageFilter}
+          <button class="variant-filled chip" on:click={() => saleStageFilter.set(undefined)}>
+            {saleStages.find((saleStage) => saleStage.id === $saleStageFilter)?.name} x
           </button>
         {/if}
       </div>
