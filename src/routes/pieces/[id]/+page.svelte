@@ -12,6 +12,7 @@
   import type { PageData } from './$types';
   import type { Photo } from '$lib/types/photo';
   import { photoViewerPhoto } from '$lib/stores/photoViewer';
+  import { convertToBase64 } from '$lib/util/image';
 
   export let data: PageData;
 
@@ -28,6 +29,8 @@
   let dbTypes = liveQuery(() => dexie.types.toCollection().sortBy('sortOrder'));
   let dbSaleStages = liveQuery(() => dexie.saleStages.toCollection().sortBy('sortOrder'));
 
+  let files: FileList;
+  let fileInput: HTMLInputElement;
   let price: number = 0;
   let soldAmount: number = 0;
   let soldDate: string = '';
@@ -97,6 +100,32 @@
     toastStore.trigger({
       message: 'Piece Saved!',
     });
+  }
+  async function handleAddPhotos() {
+    const photoIDs: string[] = [];
+
+    if (files) {
+      for (const file of files) {
+        const fileBase64 = await convertToBase64(file);
+
+        const newPhotoID = (await dexie.photos.add({
+          id: crypto.randomUUID(),
+          base64: fileBase64 as string,
+          stage: 'test',
+          createdAt: new Date().toISOString(),
+        })) as string;
+
+        photoIDs.push(newPhotoID);
+      }
+    }
+
+    for (const photoID of photoIDs) {
+      await dexie.pieces.update(hydratedPiece.id, {
+        photoIDs: hydratedPiece.photoIDs + `,${photoID}`,
+      });
+    }
+
+    fileInput.value = '';
   }
   async function handleTypeSelect(event: CustomEvent<AutocompleteOption<string>>) {
     await dexie.pieces.update(hydratedPiece.id, {
@@ -234,6 +263,23 @@
       </div>
     </div>
   {/if}
+
+  <div class="flex gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="addPhotos">Add Photos</label>
+      <input
+        class="input p-2"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        id="addPhotos"
+        multiple
+        bind:files
+        bind:this={fileInput}
+        on:change={handleAddPhotos}
+      />
+    </div>
+  </div>
 
   <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
     {#each hydratedPhotos as photo (photo.id)}
