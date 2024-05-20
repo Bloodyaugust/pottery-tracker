@@ -33,7 +33,7 @@
   $: nextPieceNum = $dbNumPieces ? $dbNumPieces + 100 : 100;
 
   let files: FileList;
-  let price: number = 0;
+  let price: number;
   let type: string = '';
   let typeID: string = '';
 
@@ -88,7 +88,7 @@
     </label>
     <label class="label">
       <span>Price</span>
-      <input class="input p-2" type="text" bind:value={price} required />
+      <input class="input p-2" type="number" bind:value={price} placeholder="0" required />
     </label>
     <label class="label">
       <span>Type</span>
