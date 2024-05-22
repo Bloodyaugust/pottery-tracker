@@ -91,6 +91,7 @@
                 {saleStages.find((saleStage) => saleStage.id === piece.saleStage)?.name}
               </button>
             {/if}
+            <span>${piece.price}</span>
           </div>
         </div>
         <div class="photos-container flex flex-1 gap-2 overflow-x-auto overflow-y-clip">
