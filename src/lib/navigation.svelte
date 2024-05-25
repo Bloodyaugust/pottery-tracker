@@ -42,6 +42,16 @@
         Types
       </a>
     </li>
+    <li>
+      <a
+        class="anchor"
+        class:active={$page.url.pathname === '/export'}
+        href="{base}/export"
+        on:click={drawerClose}
+      >
+        Export
+      </a>
+    </li>
   </ul>
 </nav>
 
