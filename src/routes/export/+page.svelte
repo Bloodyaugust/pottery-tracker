@@ -4,7 +4,7 @@
   import { ProgressRadial } from '@skeletonlabs/skeleton';
   import { liveQuery } from 'dexie';
 
-  let dbPieces = liveQuery(() => dexie.pieces.toArray());
+  let dbPieces = liveQuery(() => dexie.pieces.toCollection().reverse().sortBy('createdAt'));
   let dbTypes = liveQuery(() => dexie.types.toArray());
 
   let csvUrl: string;
